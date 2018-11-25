@@ -1,0 +1,75 @@
+if &compatible
+  set nocompatible
+end
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Remove declared plugins
+function! s:UnPlug(plug_name)
+  if has_key(g:plugs, a:plug_name)
+    call remove(g:plugs, a:plug_name)
+  endif
+endfunction
+command!  -nargs=1 UnPlug call s:UnPlug(<args>)
+
+let g:has_async = v:version >= 800 || has('nvim')
+
+" config plugins here
+let g:deoplete#enable_at_startup = 1
+
+" build composer for vim-markdown-composer
+" requires Rust
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release
+    else
+      !cargo build --release --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
+call plug#begin('~/.vim/bundle')
+  " Define bundles via Github repos
+  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'elixir-lang/vim-elixir'
+  Plug 'fatih/vim-go'
+  Plug 'kchmck/vim-coffee-script'
+  Plug 'pangloss/vim-javascript'
+  Plug 'pbrisbin/vim-mkdir'
+  Plug 'slim-template/vim-slim'
+  Plug 'tpope/vim-bundler'
+  Plug 'tpope/vim-endwise'
+  Plug 'tpope/vim-eunuch'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-projectionist'
+  Plug 'tpope/vim-rails'
+  Plug 'tpope/vim-rake'
+  Plug 'tpope/vim-repeat'
+  Plug 'tpope/vim-rhubarb'
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-dadbod'
+  Plug 'vim-ruby/vim-ruby'
+  Plug 'vim-scripts/tComment'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'mattn/emmet-vim'
+  Plug 'arrufat/vala.vim'
+  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+  Plug 'freitass/todo.txt-vim'
+
+  if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+  endif
+
+  if g:has_async
+    Plug 'w0rp/ale'
+  endif
+call plug#end()
