@@ -35,7 +35,8 @@ endfunction
 
 call plug#begin('~/.vim/bundle')
   " Define bundles via Github repos
-  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  Plug 'junegunn/fzf.vim'
   Plug 'elixir-lang/vim-elixir'
   Plug 'fatih/vim-go'
   Plug 'kchmck/vim-coffee-script'
@@ -53,6 +54,7 @@ call plug#begin('~/.vim/bundle')
   Plug 'tpope/vim-rhubarb'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-dadbod'
+  Plug 'tpope/vim-vinegar'
   Plug 'vim-ruby/vim-ruby'
   Plug 'vim-scripts/tComment'
   Plug 'airblade/vim-gitgutter'
@@ -73,3 +75,6 @@ call plug#begin('~/.vim/bundle')
     Plug 'w0rp/ale'
   endif
 call plug#end()
+
+" use FZF as ctrlp
+nnoremap <C-p> :FZF<CR>
