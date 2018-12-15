@@ -32,6 +32,8 @@ function! BuildComposer(info)
     endif
   endif
 endfunction
+" autostart markdown composer off
+let g:markdown_composer_autostart = 0
 
 call plug#begin('~/.vim/bundle')
   " Define bundles via Github repos
@@ -60,8 +62,10 @@ call plug#begin('~/.vim/bundle')
   Plug 'airblade/vim-gitgutter'
   Plug 'mattn/emmet-vim'
   Plug 'arrufat/vala.vim'
-  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
   Plug 'freitass/todo.txt-vim'
+  Plug 'junegunn/goyo.vim'
+  Plug 'junegunn/limelight.vim'
+  Plug 'flazz/vim-colorschemes'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -70,6 +74,11 @@ call plug#begin('~/.vim/bundle')
     Plug 'roxma/nvim-yarp'
     Plug 'roxma/vim-hug-neovim-rpc'
   endif
+  Plug 'Shougo/neco-syntax'
+  Plug 'Shougo/neosnippet.vim'
+  Plug 'Shougo/neosnippet-snippets'
+
+  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
   if g:has_async
     Plug 'w0rp/ale'
@@ -78,3 +87,11 @@ call plug#end()
 
 " use FZF as ctrlp
 nnoremap <C-p> :FZF<CR>
+
+" Use goyo and limelight together
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+
+" remap tab and shifttab
+inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
