@@ -66,6 +66,7 @@ call plug#begin('~/.vim/bundle')
   Plug 'junegunn/goyo.vim'
   Plug 'junegunn/limelight.vim'
   Plug 'flazz/vim-colorschemes'
+  Plug 'ap/vim-css-color'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
