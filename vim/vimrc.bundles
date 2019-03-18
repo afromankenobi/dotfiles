@@ -33,7 +33,7 @@ function! BuildComposer(info)
   endif
 endfunction
 " autostart markdown composer off
-let g:markdown_composer_autostart = 0
+let g:markdown_composer_autostart = 1
 
 call plug#begin('~/.vim/bundle')
   " Define bundles via Github repos
@@ -67,6 +67,7 @@ call plug#begin('~/.vim/bundle')
   Plug 'junegunn/limelight.vim'
   Plug 'flazz/vim-colorschemes'
   Plug 'ap/vim-css-color'
+  Plug 'jeffkreeftmeijer/vim-dim'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
