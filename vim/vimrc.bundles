@@ -68,6 +68,7 @@ call plug#begin('~/.vim/bundle')
   Plug 'flazz/vim-colorschemes'
   Plug 'ap/vim-css-color'
   Plug 'jeffkreeftmeijer/vim-dim'
+  Plug 'sheerun/vim-polyglot'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }

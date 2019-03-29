@@ -34,6 +34,7 @@ set clipboard+=unnamedplus
 let g:is_posix = 1
 
 set number
+set relativenumber
 set numberwidth=5
 
 " Open new split panes to right and bottom, which feels more natural
