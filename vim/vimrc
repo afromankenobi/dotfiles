@@ -37,6 +37,10 @@ set number
 set relativenumber
 set numberwidth=5
 
+" performance shit
+" set re=1
+" set lazyredraw
+
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
 set splitright
