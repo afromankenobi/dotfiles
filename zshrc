@@ -3,7 +3,8 @@ export FZF_DEFAULT_COMMAND='ag -g ""'
 export FZF_BASE=/home/$(whoami)/.fzf
 
 ZSH_TMUX_AUTOSTART=false
-ZSH_THEME="gallois"
+ZSH_THEME="af-magic"
+
 plugins=(rbenv zsh-autosuggestions git autojump bundler tmux ruby rails ssh-agent fzf zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
