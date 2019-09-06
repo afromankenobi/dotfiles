@@ -2,7 +2,7 @@ export ZSH=/home/$(whoami)/.oh-my-zsh
 export FZF_DEFAULT_COMMAND='ag -g ""'
 export FZF_BASE=/home/$(whoami)/.fzf
 
-ZSH_TMUX_AUTOSTART=false
+ZSH_TMUX_AUTOSTART=true
 ZSH_THEME="af-magic"
 
 plugins=(rbenv zsh-autosuggestions git autojump bundler tmux ruby rails ssh-agent fzf zsh-syntax-highlighting)
