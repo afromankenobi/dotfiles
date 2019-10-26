@@ -56,6 +56,8 @@ call plug#begin('~/.vim/bundle')
   Plug 'ap/vim-css-color'
   Plug 'jeffkreeftmeijer/vim-dim'
   Plug 'sheerun/vim-polyglot'
+  Plug 'mhinz/vim-startify'
+  Plug 'scrooloose/nerdtree'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -64,6 +66,13 @@ call plug#begin('~/.vim/bundle')
     Plug 'roxma/nvim-yarp'
     Plug 'roxma/vim-hug-neovim-rpc'
   endif
+
+  if has('win32') || has('win64')
+    Plug 'tbodt/deoplete-tabnine', { 'do': 'powershell.exe .\install.ps1' }
+  else
+    Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
+  endif
+
   Plug 'Shougo/neco-syntax'
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
@@ -105,3 +114,10 @@ inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" ALE Rubocop settings
+let g:ale_ruby_rubocop_executable = '~/.rbenv/versions/2.6.5/bin/rubocop'
+let g:ale_ruby_ruby_executable = '~/.rbenv/versions/2.6.5/bin/ruby'
+
+" Nerdtree toggle
+map <C-n> :NERDTreeToggle<CR>
