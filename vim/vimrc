@@ -1,3 +1,7 @@
+if &compatible
+  set nocompatible
+end
+
 scriptencoding utf-8
 
 let mapleader = " "
@@ -16,7 +20,7 @@ set nofoldenable      " Disable folding
 set nobackup          " Disable backups files
 set nowritebackup
 set noswapfile
-set history=100
+set history=1000
 
 "whitespace stuff
 set tabstop=2
@@ -56,11 +60,6 @@ if filereadable(expand("~/.vimrc.bundles"))
 endif
 
 filetype plugin indent on
-
-" Color scheme
-silent! colorscheme dim
-" highlight NonText guibg=#060606
-" highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
 augroup vimrcEx
   autocmd!
