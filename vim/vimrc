@@ -17,8 +17,6 @@ set incsearch         " do incremental searching
 set laststatus=2      " Always display the status line
 set autowrite         " Automatically :write before running commands
 set nofoldenable      " Disable folding
-set nobackup          " Disable backups files
-set nowritebackup
 set noswapfile
 set history=1000
 
@@ -108,3 +106,12 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+" let g:python_host_prog = '/Users/afro/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog = '/usr/local/bin/python3'
+
+" Fix ruby version
+let g:ruby_host_prog = '/Users/jorgevargassilva/.rbenv/versions/2.7.2/bin/neovim-ruby-host'
+
+" Docker...
+set backupcopy=yes

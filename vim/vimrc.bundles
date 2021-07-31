@@ -1,5 +1,4 @@
-let g:has_async = v:version >= 800 || has('nvim')
-
+let g:has_async = v:version >= 800 || has('nvim') 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -52,6 +51,7 @@ call plug#begin('~/.vim/bundle')
   Plug 'tpope/vim-vinegar'
   Plug 'vim-ruby/vim-ruby'
   Plug 'vim-scripts/tComment'
+  Plug 'codota/tabnine-vim'
 
   if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -60,12 +60,6 @@ call plug#begin('~/.vim/bundle')
     Plug 'roxma/nvim-yarp'
     Plug 'roxma/vim-hug-neovim-rpc'
   endif
-  if has('win32') || has('win64')
-    Plug 'tbodt/deoplete-tabnine', { 'do': 'powershell.exe .\install.ps1' }
-  else
-    Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
-  endif
-  Plug 'deoplete-plugins/deoplete-zsh'
 
   if g:has_async
     Plug 'dense-analysis/ale'
@@ -93,14 +87,46 @@ nnoremap <C-p> :FZF<CR>
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" Color name (:help gui-colors) or RGB color
+let g:limelight_conceal_guifg = 'DarkGray'
+let g:limelight_conceal_guifg = '#777777'
+
+" Default: 0.5
+let g:limelight_default_coefficient = 0.7
+
+" Number of preceding/following paragraphs to include (default: 0)
+let g:limelight_paragraph_span = 1
+
+" Beginning/end of paragraph
+"   When there's no empty line between the paragraphs
+"   and each paragraph starts with indentation
+let g:limelight_bop = '^\s'
+let g:limelight_eop = '\ze\n^\s'
+
+" Highlighting priority (default: 10)
+"   Set it to -1 not to overrule hlsearch
+let g:limelight_priority = -1
+
 " remap tab and shifttab
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
+let g:ale_fixers = {
+\   'javascript': ['prettier'],
+\   'css': ['prettier'],
+\   'ruby': ['rubocop', 'trim_whitespace', 'remove_trailing_lines']
+\}
+
+let g:ale_ruby_rubocop_executable = '/Users/jorgevargassilva/.rbenv/versions/2.7.2/bin/rubocop'
+
 " Ale config
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
-" let g:ale_lint_on_enter = 0
+let g:ale_lint_on_enter = 1
 
 " Nerdtree toggle
 map <C-n> :NERDTreeToggle<CR>
@@ -120,10 +146,10 @@ let g:rubycomplete_use_bundler = 1
 " let g:rubycomplete_load_paths = ["/path/to/code", "./lib/example"]
 
 " deoplete tabnine client
-call deoplete#custom#var('tabnine', {
-\ 'line_limit': 250,
-\ 'max_num_results': 10,
-\ })
+" call deoplete#custom#var('tabnine', {
+" \ 'line_limit': 250,
+" \ 'max_num_results': 10,
+" \ })
 
 " Dadbod
 " For built in omnifunc
