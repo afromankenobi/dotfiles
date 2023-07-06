@@ -25,11 +25,11 @@ set tabstop=2
 set shiftwidth=2
 set shiftround
 set expandtab
-set list listchars=tab:->,trail:·
+set list listchars=tab:»·,trail:·,nbsp:·
 set nojoinspaces      "  Use one space, not two, after punctuation.
 
 " Use system clipboard
-set clipboard+=unnamedplus
+set clipboard+=unnamed
 
 " When the type of shell script is /bin/sh, assume a POSIX-compatible
 " shell for syntax highlighting purposes.
@@ -59,6 +59,8 @@ endif
 
 filetype plugin indent on
 
+au FileType sql setl formatprg=/opt/homebrew/bin/pg_format\ -
+
 augroup vimrcEx
   autocmd!
 
@@ -77,23 +79,9 @@ augroup vimrcEx
   autocmd BufRead,BufNewFile gitconfig.local set filetype=gitconfig
   autocmd BufRead,BufNewFile tmux.conf.local set filetype=tmux
   autocmd BufRead,BufNewFile vimrc.local set filetype=vim
+
+  autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
-
-" Disable valadoc syntax highlight
-"let vala_ignore_valadoc = 1
-
-" Enable comment strings
-let vala_comment_strings = 1
-
-" Highlight space errors
-let vala_space_errors = 1
-" Disable trailing space errors
-"let vala_no_trail_space_error = 1
-" Disable space-tab-space errors
-let vala_no_tab_space_error = 1
-
-" Minimum lines used for comment syncing (default 50)
-"let vala_minlines = 120
 
 " Don't use the arrows dude!
 nnoremap <Left> :echoe "Use h"<CR>
@@ -107,11 +95,14 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
-" let g:python_host_prog = '/Users/afro/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/opt/homebrew/bin/python3'
 
 " Fix ruby version
-let g:ruby_host_prog = '/Users/jorgevargassilva/.rbenv/versions/2.7.2/bin/neovim-ruby-host'
+let g:ruby_host_prog = '~/.rbenv/shims/neovim-ruby-host'
 
 " Docker...
 set backupcopy=yes
+
+let g:html_indent_tags = 'li\|p'
+
+set diffopt+=vertical

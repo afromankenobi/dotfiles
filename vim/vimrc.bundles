@@ -1,4 +1,5 @@
-let g:has_async = v:version >= 800 || has('nvim') 
+let g:has_async = v:version >= 800 || has('nvim')
+
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -10,40 +11,43 @@ endif
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
     if has('nvim')
-      !cargo build --release
+      !cargo build --release --locked
     else
-      !cargo build --release --no-default-features --features json-rpc
+      !cargo build --release --locked --no-default-features --features json-rpc
     endif
   endif
 endfunction
 
 call plug#begin('~/.vim/bundle')
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
+  Plug 'sheerun/vim-polyglot'
+  " Plug 'SirVer/ultisnips'
   Plug 'airblade/vim-gitgutter'
   Plug 'ap/vim-css-color'
-  Plug 'arrufat/vala.vim'
+  Plug 'danilamihailov/beacon.nvim'
   Plug 'elixir-lang/vim-elixir'
-  Plug 'euclio/vim-markdown-composer'
-  Plug 'fatih/vim-go'
-  Plug 'freitass/todo.txt-vim'
+  " Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+  Plug 'andymass/vim-matchup'
+  Plug 'honza/vim-snippets'
   Plug 'jeffkreeftmeijer/vim-dim'
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-  Plug 'junegunn/fzf.vim'
   Plug 'junegunn/goyo.vim'
   Plug 'junegunn/limelight.vim'
   Plug 'mattn/emmet-vim'
   Plug 'mhinz/vim-startify'
+  Plug 'nanotee/zoxide.vim'
   Plug 'pangloss/vim-javascript'
   Plug 'pbrisbin/vim-mkdir'
   Plug 'scrooloose/nerdtree'
-  Plug 'sheerun/vim-polyglot'
   Plug 'tpope/vim-bundler'
   Plug 'tpope/vim-dadbod'
-  Plug 'kristijanhusak/vim-dadbod-completion'
+  Plug 'kristijanhusak/vim-dadbod-ui'
   Plug 'tpope/vim-endwise'
   Plug 'tpope/vim-eunuch'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-projectionist'
   Plug 'tpope/vim-rails'
+  Plug 'tpope/vim-dispatch'
   Plug 'tpope/vim-rake'
   Plug 'tpope/vim-repeat'
   Plug 'tpope/vim-rhubarb'
@@ -51,14 +55,25 @@ call plug#begin('~/.vim/bundle')
   Plug 'tpope/vim-vinegar'
   Plug 'vim-ruby/vim-ruby'
   Plug 'vim-scripts/tComment'
-  Plug 'codota/tabnine-vim'
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'kristijanhusak/vim-dadbod-completion'
 
   if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
+    Plug 'github/copilot.vim'
+    Plug 'ibhagwan/fzf-lua', {'branch': 'main'}
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+    " Plug 'L3MON4D3/LuaSnip'
+    " Plug 'glepnir/lspsaga.nvim'
+    " Plug 'hrsh7th/cmp-buffer'
+    " Plug 'hrsh7th/cmp-cmdline'
+    " Plug 'hrsh7th/cmp-nvim-lsp'
+    " Plug 'hrsh7th/cmp-path'
+    " Plug 'hrsh7th/nvim-cmp'
+    " Plug 'molleweide/LuaSnip-snippets.nvim'
+    " Plug 'neovim/nvim-lspconfig'
+    " Plug 'rafamadriz/friendly-snippets'
+    " Plug 'saadparwaiz1/cmp_luasnip'
   endif
 
   if g:has_async
@@ -74,14 +89,49 @@ function! s:UnPlug(plug_name)
 endfunction
 command! -nargs=1 UnPlug call s:UnPlug(<args>)
 
-" config plugins here
-let g:deoplete#enable_at_startup = 1
-
-" autostart markdown composer off
-let g:markdown_composer_open_browser = 0
+""" config plugins here
+if has('nvim')
+  let g:markdown_composer_open_browser = 0 " autostart markdown composer off
+endif
 
 " use FZF as ctrlp
-nnoremap <C-p> :FZF<CR>
+nnoremap <C-p> :call Fzf_dev()<CR>
+nnoremap <silent> <leader>e :call Fzf_dev()<CR>
+
+" ripgrep
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+  set grepprg=rg\ --vimgrep
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+endif
+
+" Files + devicons
+function! Fzf_dev()
+  let l:fzf_files_options = '--preview "bat --theme="OneHalfDark" --style=numbers,changes --color always {2..-1} | head -'.&lines.'"'
+  function! s:files()
+    let l:files = split(system($FZF_DEFAULT_COMMAND), '\n')
+    return s:prepend_icon(l:files)
+  endfunction
+  function! s:prepend_icon(candidates)
+    let l:result = []
+    for l:candidate in a:candidates
+      let l:filename = fnamemodify(l:candidate, ':p:t')
+      let l:icon = WebDevIconsGetFileTypeSymbol(l:filename, isdirectory(l:filename))
+      call add(l:result, printf('%s %s', l:icon, l:candidate))
+    endfor
+    return l:result
+  endfunction
+  function! s:edit_file(item)
+    let l:pos = stridx(a:item, ' ')
+    let l:file_path = a:item[pos+1:-1]
+    execute 'silent e' l:file_path
+  endfunction
+  call fzf#run({
+        \ 'source': <sid>files(),
+        \ 'sink':   function('s:edit_file'),
+        \ 'options': '-m ' . l:fzf_files_options,
+        \ 'down':    '40%' })
+endfunction
 
 " Use goyo and limelight together
 autocmd! User GoyoEnter Limelight
@@ -121,7 +171,16 @@ let g:ale_fixers = {
 \   'ruby': ['rubocop', 'trim_whitespace', 'remove_trailing_lines']
 \}
 
-let g:ale_ruby_rubocop_executable = '/Users/jorgevargassilva/.rbenv/versions/2.7.2/bin/rubocop'
+let g:ycm_language_server =
+  \ [
+  \   {
+  \     'name': 'Solargraph',
+  \     'cmdline': [ '~/.rbenv/shims/solargraph', '--stdio' ],
+  \     'filetypes': [ 'ruby' ]
+  \   }
+  \ ]
+
+let g:ale_ruby_rubocop_executable = '~/.rbenv/shims/rubocop'
 
 " Ale config
 let g:ale_lint_on_text_changed = 'never'
@@ -131,11 +190,8 @@ let g:ale_lint_on_enter = 1
 " Nerdtree toggle
 map <C-n> :NERDTreeToggle<CR>
 
-" startify
-set viminfo='100,n$HOME/.vim/files/info/viminfo
-
 " Color scheme
-silent! colorscheme dim
+colorscheme dim
 
 " vim-ruby config
 let g:rubycomplete_buffer_loading = 1
@@ -143,14 +199,61 @@ let g:rubycomplete_classes_in_global = 1
 let g:rubycomplete_rails = 1
 let g:rubycomplete_load_gemfile = 1
 let g:rubycomplete_use_bundler = 1
-" let g:rubycomplete_load_paths = ["/path/to/code", "./lib/example"]
 
-" deoplete tabnine client
-" call deoplete#custom#var('tabnine', {
-" \ 'line_limit': 250,
-" \ 'max_num_results': 10,
-" \ })
+" Startify
+" returns all modified files of the current git repo
+" `2>/dev/null` makes the command fail quietly, so that when we are not
+" in a git repo, the list will be empty
+function! s:gitModified()
+  let files = systemlist('git ls-files -m 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
 
-" Dadbod
-" For built in omnifunc
+" same as above, but show untracked files, honouring .gitignore
+function! s:gitUntracked()
+  let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+
+let g:startify_lists = [
+        \ { 'type': 'files',     'header': ['   MRU']            },
+        \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
+        \ { 'type': 'sessions',  'header': ['   Sessions']       },
+        \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+        \ { 'type': function('s:gitModified'),  'header': ['   git modified']},
+        \ { 'type': function('s:gitUntracked'), 'header': ['   git untracked']},
+        \ { 'type': 'commands',  'header': ['   Commands']       },
+        \ ]
+
+" Beacon config
+let g:beacon_enable = 1
+"  g:beacon_ignore_buffers = [\w*git*\w]
+"  g:beacon_ignore_filetypes = ['fzf']
+nmap n n:Beacon<cr>
+nmap N N:Beacon<cr>
+nmap * *:Beacon<cr>
+nmap # #:Beacon<cr>
+
+" disable on inactive windows
+augroup MyCursorLineGroup
+    autocmd!
+    au WinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup end
+
+if filereadable(expand("~/.nvimrc.lua")) && has('nvim')
+  source ~/.nvimrc.lua
+endif
+
+nnoremap <silent>K :Lspsaga hover_doc<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> <C-j> :Lspsaga diagnostic_jump_next<CR>
+
+set completeopt=menu,menuone,noselect
+
+let g:dbs = {
+\  'dev': 'postgres://comunidadfeliz:comunidad-feliz@localhost:5432/comunidadfeliz_development'
+\ }
+
 autocmd FileType sql setlocal omnifunc=vim_dadbod_completion#omni
