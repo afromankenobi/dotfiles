@@ -75,8 +75,10 @@ plugins=(
   rake-fast
   rbenv
   ruby
+  rust
   tmux
   zoxide
+  yarn
   brew
 )
 
@@ -91,9 +93,24 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/opt/homebrew/share/zsh-syntax-highlighting/highlighters
 . "$HOME/.cargo/env"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 alias ls=exa
-alias cp=xcp
 alias cd=z
+alias cp=xcp
 alias find=fd
 alias python=python3
+
+autoload -U add-zsh-hook
+
+load_token() {
+  local diligent_folder_pattern="$HOME/src/*" # Change this to path where your work projects lives
+  if [[ "$PWD" =~ $diligent_folder_pattern ]]; then
+    export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s "diligent_gh_packages_token" -w)
+  fi
+}
+add-zsh-hook chpwd load_token
+load_token
+
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
