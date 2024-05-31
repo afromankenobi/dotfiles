@@ -114,3 +114,6 @@ load_token
 
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+
+eval "$(atuin init zsh)"
+
