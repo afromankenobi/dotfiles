@@ -22,12 +22,11 @@ call plug#begin('~/.vim/bundle')
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'sheerun/vim-polyglot'
-  " Plug 'SirVer/ultisnips'
   Plug 'airblade/vim-gitgutter'
   Plug 'ap/vim-css-color'
   Plug 'danilamihailov/beacon.nvim'
   Plug 'elixir-lang/vim-elixir'
-  " Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
   Plug 'andymass/vim-matchup'
   Plug 'honza/vim-snippets'
   Plug 'jeffkreeftmeijer/vim-dim'
@@ -63,22 +62,47 @@ call plug#begin('~/.vim/bundle')
     Plug 'ibhagwan/fzf-lua', {'branch': 'main'}
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
+    Plug 'folke/neodev.nvim'
+    Plug 'williamboman/mason.nvim'
+    Plug 'williamboman/mason-lspconfig.nvim'
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'mfussenegger/nvim-dap'
+    Plug 'rcarriga/nvim-dap-ui'
+
+    Plug 'nvim-tree/nvim-web-devicons'
+    Plug 'folke/trouble.nvim'
+    Plug 'mhartington/formatter.nvim'
+
+    " Snippets -> https://github.com/hrsh7th/nvim-cmp
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'petertriho/cmp-git'
+
+    " For vsnip users.
+    Plug 'hrsh7th/cmp-vsnip'
+    Plug 'hrsh7th/vim-vsnip'
+
+    " For luasnip users.
     " Plug 'L3MON4D3/LuaSnip'
-    " Plug 'glepnir/lspsaga.nvim'
-    " Plug 'hrsh7th/cmp-buffer'
-    " Plug 'hrsh7th/cmp-cmdline'
-    " Plug 'hrsh7th/cmp-nvim-lsp'
-    " Plug 'hrsh7th/cmp-path'
-    " Plug 'hrsh7th/nvim-cmp'
-    " Plug 'molleweide/LuaSnip-snippets.nvim'
-    " Plug 'neovim/nvim-lspconfig'
-    " Plug 'rafamadriz/friendly-snippets'
     " Plug 'saadparwaiz1/cmp_luasnip'
+
+    " For ultisnips users.
+    " Plug 'SirVer/ultisnips'
+    " Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+    " For snippy users.
+    " Plug 'dcampos/nvim-snippy'
+    " Plug 'dcampos/cmp-snippy'
+
   endif
 
-  if g:has_async
-    Plug 'dense-analysis/ale'
-  endif
+  " if g:has_async
+  "   Plug 'dense-analysis/ale'
+  " endif
 call plug#end()
 
 " Remove declared plugins
@@ -165,28 +189,28 @@ let g:limelight_priority = -1
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
-let g:ale_fixers = {
-\   'javascript': ['prettier'],
-\   'css': ['prettier'],
-\   'ruby': ['rubocop', 'trim_whitespace', 'remove_trailing_lines']
-\}
-
-let g:ycm_language_server =
-  \ [
-  \   {
-  \     'name': 'Solargraph',
-  \     'cmdline': [ '~/.rbenv/shims/solargraph', '--stdio' ],
-  \     'filetypes': [ 'ruby' ]
-  \   }
-  \ ]
-
-let g:ale_ruby_rubocop_executable = '~/.rbenv/shims/rubocop'
-
-" Ale config
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 0
-let g:ale_lint_on_enter = 1
-
+" let g:ale_fixers = {
+" \   'javascript': ['prettier'],
+" \   'css': ['prettier'],
+" \   'ruby': ['rubocop', 'trim_whitespace', 'remove_trailing_lines']
+" \}
+" 
+" let g:ycm_language_server =
+"   \ [
+"   \   {
+"   \     'name': 'Solargraph',
+"   \     'cmdline': [ '~/.rbenv/shims/solargraph', '--stdio' ],
+"   \     'filetypes': [ 'ruby' ]
+"   \   }
+"   \ ]
+" 
+" let g:ale_ruby_rubocop_executable = '~/.rbenv/shims/rubocop'
+" 
+" " Ale config
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_lint_on_insert_leave = 0
+" let g:ale_lint_on_enter = 1
+"
 " Nerdtree toggle
 map <C-n> :NERDTreeToggle<CR>
 
@@ -253,7 +277,7 @@ nnoremap <silent> <C-j> :Lspsaga diagnostic_jump_next<CR>
 set completeopt=menu,menuone,noselect
 
 let g:dbs = {
-\  'dev': 'postgres://comunidadfeliz:comunidad-feliz@localhost:5432/comunidadfeliz_development'
+\  'dev': 'postgres://postgres@localhost:5432/risks_development'
 \ }
 
 autocmd FileType sql setlocal omnifunc=vim_dadbod_completion#omni
