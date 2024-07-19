@@ -32,7 +32,6 @@ plugins=(
   ripgrep
   ruby
   rust
-  terraform
   tmux
   yarn
   zoxide
@@ -42,7 +41,7 @@ zstyle :omz:plugins:iterm2 shell-integration yes
 
 source $ZSH/oh-my-zsh.sh
 
-export EDITOR="nvim"
+export EDITOR="emacsclient -t"
 
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
@@ -52,6 +51,7 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=$BREW_PREFIX/share/zsh-syntax-highlighting
 source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 . "$HOME/.cargo/env"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 alias cd=z
 alias code=code-insiders
