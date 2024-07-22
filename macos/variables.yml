@@ -1,0 +1,136 @@
+---
+downloads: ~/Downloads/ansible
+
+configure_osx: true
+configure_sudoers: false
+# Example:
+# sudoers_custom_config: |
+#   # Allow users in admin group to use sudo with no password.
+#   %admin ALL=(ALL) NOPASSWD: ALL
+
+osx_script: "./macos/osx --no-restart"
+
+mas_installed_apps:
+  - { id: 1352778147, name: 'Bitwarden' }
+  - { id: 1402042596, name: 'AdBlock' }
+  - { id: 1458969831, name: JSONPeep }
+  - { id: 1462114288, name: 'Grammarly for Safari' }
+  - { id: 1482920575, name: 'DuckDuckGo Privacy for Safari' }
+  - { id: 1484348796, name: 'Endel' }
+  - { id: 409183694, name: "Keynote" }
+  - { id: 409201541, name: "Pages" }
+  - { id: 409203825, name: "Numbers" }
+  - { id: 497799835, name: 'Xcode' }
+  - { id: 747648890, name: 'Telegram' }
+  - { id: 775737590, name: 'iA Writer' }
+  - { id: 961632517, name: 'Be Focused Pro: Pomodoro Timer' }
+mas_upgrade_all_apps: true
+
+homebrew_installed_packages:
+  - ansible
+  - autoconf
+  - bash-completion
+  - bat
+  - bison
+  - cmake
+  - cowsay
+  - dialog
+  - dos2unix
+  - doxygen
+  - eza
+  - fd
+  - ffmpeg
+  - findutils
+  - fossil
+  - fzf
+  - gettext
+  - gifsicle
+  - git
+  - git
+  - git-delta
+  - github/gh/gh
+  - gnu-sed
+  - go
+  - gpg
+  - graphviz
+  - haproxy
+  - htop
+  - httpie
+  - imagemagick
+  - iperf
+  - jq
+  - libevent
+  - libpq
+  - libwebm
+  - lsusb
+  - mas
+  - mosh
+  - mysql
+  - nmap
+  - node
+  - nvim
+  - nvm
+  - openssl
+  - openssl@3
+  - p7zip
+  - php
+  - postgresql
+  - pv
+  - rbenv
+  - readline
+  - redis
+  - ripgrep
+  - rust
+  - s3cmd
+  - sqlite
+  - sqlite3
+  - ssh-copy-id
+  - starship
+  - svn
+  - the_silver_searcher
+  - tmux
+  - tree-sitter
+  - uchardet
+  - vim
+  - viu
+  - wget
+  - whois
+  - wrk
+  - yarn
+  - zip
+  - zoxide
+  - zsh-autosuggestions
+  - zsh-history-substring-search
+  - zsh-syntax-highlighting
+
+homebrew_cask_appdir: /Applications
+homebrew_cask_apps:
+  - alt-tab
+  - firefox
+  - handbrake
+  - licecap
+  - sublime-text
+  - dbeaver-community
+  - postman
+  - insomnia
+  - font-ubuntu-nerd-font
+  - font-symbols-only-nerd-font
+  - font-sauce-code-pro-nerd-font
+  - font-roboto-mono-nerd-font
+  - font-meslo-lg-nerd-font
+  - font-inconsolata-nerd-font
+  - font-fira-code-nerd-font
+
+configure_dock: true
+# dockitems_remove:
+#   - Launchpad
+#   - Keynote
+#   - Reminders
+
+# dockitems_persist:
+#   - name: "iTerm"
+#     path: "/Applications/iTerm.app/"
+#     pos: 1
+#   - name: "Licecap"
+#     path: "/Applications/Licecap.app/"
+#     pos: 2
