@@ -2,8 +2,9 @@
 *.local
 *.local.*
 
-# Do not ignore CLAUDE.md
+# Exceptions to the ignore rules
 !CLAUDE.md
+!*.local.example
 
 # Ignore backup files
 *~

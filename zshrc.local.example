@@ -1,0 +1,23 @@
+# Example local configuration file for zsh
+# Copy this to ~/.zshrc.local and customize with your private settings
+
+# Examples of API tokens retrieved from macOS Keychain
+# export API_KEY=$(security find-generic-password -a "$USER" -s "api_key_name" -w 2>/dev/null || echo "")
+# export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s "github_token" -w 2>/dev/null || echo "")
+
+# Examples of 1Password-stored secrets
+# export PRIVATE_TOKEN="op://Vault/Item/field"
+
+# Work folder specific tokens example
+# load_work_tokens() {
+#   local work_folder_pattern="$HOME/projects/*"
+#   if [[ "$PWD" =~ $work_folder_pattern ]]; then
+#     export PROJECT_TOKEN=$(security find-generic-password -a "$USER" -s "project_token" -w 2>/dev/null || echo "")
+#   fi
+# }
+# 
+# add-zsh-hook chpwd load_work_tokens
+# load_work_tokens
+
+# Local path configurations
+# export PATH="$HOME/local/bin:$PATH"
