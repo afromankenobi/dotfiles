@@ -1,119 +1,171 @@
+#------------------------------------------------------------------------------
+# OH-MY-ZSH CONFIGURATION
+#------------------------------------------------------------------------------
+# Set Oh-My-Zsh location
 export ZSH=$HOME/.oh-my-zsh
 
+# TMUX settings
 export ZSH_TMUX_AUTOSTART=false
 export ZSH_TMUX_UNICODE=true
 export ZSH_TMUX_AUTONAME_SESSION=true
 
+# ZSH Completion path
 export FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
+# FZF configuration
 export DISABLE_FZF_KEY_BINDINGS="true"
 export FZF_DEFAULT_COMMAND='rg --column --line-number --color=always --smart-case --files --hidden --glob "!.git/*"'
-export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
+# Zoxide configuration (directory jumping)
 export ZOXIDE_CMD_OVERRIDE="cd"
 
+# Oh-My-Zsh plugins grouped by purpose
 plugins=(
+    # Package managers
     asdf
-    ansible
-    aws
     brew
     bundler
-    colorize
-    docker
-    docker-compose
-    eza
-    fossil
-    keychain
-    gpg-agent
     gem
-    git
-    man
-    mosh
-    nmap
-    pyenv
-    pylint
+    
+    # Languages & frameworks
     ruby
     rails
-    starship
-    fzf
-    zsh-interactive-cd
+    rust
+    pyenv
+    pylint
     mix # Try mix-fast if this is too slow
     terraform
-    rake-fast
-    rust
-    tmux
+    
+    # DevOps & cloud tools
+    ansible
+    aws
+    docker
+    docker-compose
+    
+    # Version control
+    git
+    
+    # System utilities
     sudo
-    yarn
+    man
+    keychain
+    gpg-agent
+    fossil
+    mosh
+    nmap
+    
+    # Terminal enhancements
+    colorize
+    eza
+    fzf
+    zsh-interactive-cd
+    tmux
     zoxide
+    starship
+    
+    # Build tools
+    rake-fast
+    
+    # JavaScript/npm tools
+    yarn
 )
 
+# Source Oh-My-Zsh
 source $ZSH/oh-my-zsh.sh
 
+#------------------------------------------------------------------------------
+# EDITOR & TERMINAL CONFIGURATION
+#------------------------------------------------------------------------------
+# Default editor
 export EDITOR="emacsclient -t"
 
-zstyle ':completion:*:*:docker:*' option-stacking yes
-zstyle ':completion:*:*:docker-*:*' option-stacking yes
+# Man page formatting with bat
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
+# LSP configuration for Emacs
+export LSP_USE_PLISTS=true
+
+# Brew prefix for use in multiple places
 export BREW_PREFIX=$(brew --prefix)
-export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=$BREW_PREFIX/share/zsh-syntax-highlighting/highlighters
-source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion atuin)
 
+# Terminal integration for iTerm2
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+#------------------------------------------------------------------------------
+# PATH CONFIGURATION
+#------------------------------------------------------------------------------
+# Cargo (Rust package manager)
 . "$HOME/.cargo/env"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# alias cd=z # from zoxide! not zcd
-alias code=code-insiders
-alias cp=xcp
-alias find=fd
+# Application and development paths
+export PATH=~/.config/emacs/bin/:$PATH
+export PATH=~/go/bin:$PATH
+export PATH=~/.local/bin:$PATH
+export PATH=~/.npm-global/bin:$PATH
+export PATH=~/.cabal/bin/:$PATH
+export PATH="$PATH:$HOME/.dotnet/tools"
+export PATH="$(brew --prefix)/opt/sqlite/bin:$PATH"
 
-autoload -U add-zsh-hook
-
-# Load local/private configuration if it exists
-# See zshrc.local.example for examples
-if [[ -f "$HOME/.zshrc.local" ]]; then
-    source "$HOME/.zshrc.local"
-fi
-
-export PATH=~/.config/emacs/bin/:~/go/bin:~/.local/bin:$PATH
-
-. ~/.asdf/plugins/java/set-java-home.zsh
-
-eval "$(saml2aws --completion-script-zsh)"
-source /Users/jvargas/.config/op/plugins.sh
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-export LSP_USE_PLISTS=true
-
-. "$HOME/.atuin/bin/env"
-eval "$(atuin init zsh)"
-
-# Add .NET Core SDK tools
-export PATH="$PATH:/Users/jvargas/.dotnet/tools"
-
-[ -f "/Users/jvargas/.ghcup/env" ] && . "/Users/jvargas/.ghcup/env" # ghcup-env
-
+# ASDF version manager
 export ASDF_DATA_DIR="$HOME/.asdf"
 export PATH="$ASDF_DATA_DIR/shims:$PATH"
+. ~/.asdf/plugins/java/set-java-home.zsh
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/jvargas/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
+# Haskell
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
 
-# Docker daemon says bake is faster. Let's try
-COMPOSE_BAKE=true
-export PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+#------------------------------------------------------------------------------
+# TOOL-SPECIFIC CONFIGURATION
+#------------------------------------------------------------------------------
+# Docker configuration
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-# Eza config
+# Docker compose settings
+export COMPOSE_BAKE=true
+
+# Eza configuration (modern ls replacement)
 zstyle ':omz:plugins:eza' 'dirs-first' yes
 zstyle ':omz:plugins:eza' 'git-status' yes
 zstyle ':omz:plugins:eza' 'header' yes
 zstyle ':omz:plugins:eza' 'icons' yes
 zstyle ':omz:plugins:eza' 'show-group' yes
 
-export PATH=~/.npm-global/bin:~/.cabal/bin/:$PATH
+# ZSH autosuggestions
+export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=$BREW_PREFIX/share/zsh-syntax-highlighting/highlighters
+source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion atuin)
 
-export COMPOSE_BAKE=true
+# Terminal history with Atuin
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh)"
+
+# SAML authentication for AWS
+eval "$(saml2aws --completion-script-zsh)"
+
+# 1Password plugin
+source $HOME/.config/op/plugins.sh
+
+# Docker completions
+fpath=($HOME/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+
+#------------------------------------------------------------------------------
+# ALIASES
+#------------------------------------------------------------------------------
+# Modern alternatives to classic tools
+# alias cd=z # from zoxide! not zcd
+alias code=code-insiders
+alias cp=xcp
+alias find=fd
+
+#------------------------------------------------------------------------------
+# LOCAL CONFIGURATION
+#------------------------------------------------------------------------------
+# Load local/private configuration if it exists
+# See zshrc.local.example for examples
+if [[ -f "$HOME/.zshrc.local" ]]; then
+    source "$HOME/.zshrc.local"
+fi
