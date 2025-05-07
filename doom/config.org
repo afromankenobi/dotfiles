@@ -1,0 +1,366 @@
+#+title: Doom Emacs Configuration
+#+author: Jorge Vargas Silva.
+#+description: A literate programming approach to my Doom Emacs configuration
+
+* Introduction
+I started using Emacs a while ago, mainly because of org-mode.
+Org-mode is an amazing tool, but it needs some work to be as I want. This is my attempt to create a literate config for it.
+I'm trying to take advantage of LP while transitioning from Spacemacs to doom Emacs.
+
+* Base Doom Configuration
+** Core Settings
+These are the fundamental settings that Doom Emacs needs to function as I prefer.
+Some of these must be set before packages are loaded.
+
+#+BEGIN_SRC emacs-lisp
+;;; config.el -*- lexical-binding: t; -*-
+
+;; Font Configuration
+;; Doom provides five font variables you can adjust:
+;; - doom-font: The primary monospace font
+;; - doom-variable-pitch-font: Non-monospace font for variable-pitch-mode
+;; - doom-big-font: Used for doom-big-font-mode (presentations/streaming)
+;; - doom-symbol-font: Font for symbols
+;; - doom-serif-font: Font for the fixed-pitch-serif face
+(setq doom-font (font-spec :family "MesloLGSDZ Nerd Font" :size 14 :weight 'normal))
+(setq doom-variable-pitch-font (font-spec :family "MesloLGSDZ Nerd Font" :size 14 :weight 'normal))
+
+;; Theme Configuration
+;; Load one of Doom's gorgeous themes
+(setq doom-theme 'doom-one)
+
+;; Line Numbers
+;; Options: t (absolute), 'relative, or nil (disabled)
+(setq display-line-numbers-type 'relative)
+
+;; Org Directory
+;; Must be set before org loads!
+(setq org-directory "~/orgfiles/")
+
+;; Enable `variable-pitch-mode` in all buffers
+(setq doom-font doom-variable-pitch-font)
+
+(remove-hook 'doom-first-input-hook #'evil-snipe-mode)
+
+;; enable word-wrap (almost) everywhere
+(+global-word-wrap-mode +1)
+#+END_SRC
+
+** Important Notes About Doom Configuration
+Here are some key points to remember when configuring Doom Emacs:
+
+1. Most configurations should be wrapped in ~after!~ blocks to ensure they load
+   after Doom's defaults. This prevents Doom from accidentally overriding your settings.
+
+2. Exceptions to the ~after!~ rule:
+   - File/directory variables (like ~org-directory~)
+   - Variables that must be set before package loading
+   - Doom-specific variables (prefixed with 'doom-' or '+')
+
+3. Useful configuration helpers:
+   - ~load!~ :: For loading external .el files
+   - ~use-package!~ :: For configuring packages
+   - ~after!~ :: For running code after a package loads
+   - ~add-load-path!~ :: For adding directories to the ~load-path~
+   - ~map!~ :: For binding new keys
+
+4. Getting help:
+   - Press 'K' over a symbol for documentation
+   - Use 'C-h o' to look up symbols
+   - Try 'gd' to jump to definitions
+
+* Org Configuration
+
+** Folder configurations
+Setting up the directory structure for all org files.
+
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (setq org-agenda-files (list (concat org-directory "/agenda.org"))
+        org-default-notes-file (concat org-directory "/notes.org")
+        org-refile-targets '((org-agenda-files :maxlevel . 3))
+        org-todos-file (concat org-directory "/todos.org")
+        org-notes-file (concat org-directory "/notes.org")
+        org-journal-file (concat org-directory "/journal.org")
+        org-journal-dir (concat org-directory "/journal/")))
+#+END_SRC
+
+** Core configurations
+These are the basic configurations that control how org-mode behaves, including timestamps, logging, and visual preferences.
+
+#+BEGIN_SRC emacs-lisp
+(after! org
+  ;; I like to have an explanation when i move things to ~done~, ~canceled~, ~next~ and ~waiting~.
+  (setq org-todo-keywords
+        '((sequence "TODO(t!)" "WAITING(w@/!)" "NEXT(n@/!)" "|" "DONE(d@/!)" "CANCELLED(c@/!)")))
+  ;; Timestamp and logging configurations
+  (setq org-log-done 'time
+        org-log-redeadline 'time
+        org-log-reschedule 'time
+        org-log-into-drawer t
+
+        ;; Behavior configurations
+        org-return-follows-link t
+        org-startup-indented t
+
+        ;; Source block configurations
+        org-src-fontify-natively t
+        org-src-tab-acts-natively t
+        org-src-preserve-indentation t)
+
+  ;; These templates define quick capture patterns for todos, notes, and journal entries.
+  (setq org-capture-templates
+        `(("t" "Todo" entry (file+headline ,org-todos-file "Tasks")
+           "* TODO %?\n  %U\n  %a")
+          ("n" "Notes" entry (file+headline ,org-notes-file "Notes")
+           "* %?\n  %U\n  %a")
+          ("j" "Journal" entry (file+datetree ,org-journal-file)
+           "* %?\nEntered on %U\n  %i\n  %a"))))
+#+END_SRC
+
+* Agenda
+** Look all ORG_DIR for TODOs
+I know that i'm messy, so search everywhere to prevent forgetting.
+
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (setq org-agenda-files (directory-files-recursively "~/orgfiles/" "\\.org$")))
+#+END_SRC
+
+* Babel
+** Languages and configurations
+Setting up org-babel for various programming languages and their configurations.
+
+#+BEGIN_SRC emacs-lisp
+(after! ob
+  ;; Configure available languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell      . t)
+     (js         . t)
+     (emacs-lisp . t)
+     (elixir     . t)
+     (python     . t)
+     (ruby       . t)
+     (css        . t)
+     (R          . t)
+     (sql        . t)
+     (sqlite     . t)
+     (org        . t)
+     (sed        . t)
+     (csharp     . t)
+     (java       . t)))
+
+  ;; Interpreter settings
+  (setq org-babel-python-command "python3 -u"
+        org-confirm-babel-evaluate nil))
+#+END_SRC
+
+* Github Copilot
+
+I'm experimenting with Copilot. Not so good yet but i will keep trying:
+
+#+BEGIN_SRC emacs-lisp
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-n" . 'copilot-next-completion)
+              ("C-p" . 'copilot-previous-completion))
+  :config
+  (setq copilot-max-char 1000000)
+  ;; Ensure Copilot uses completion-at-point (capf), which corfu understands
+  (add-to-list 'completion-at-point-functions #'copilot-completion-at-point)
+  ;; Optional: Control when Copilot tries to complete
+  ;; For example, only enable Copilot in insert mode if you use Evil:
+  (setq copilot-enable-predicates '(evil-insert-state-p))
+  ;; Configure indent config per language
+  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2))
+  ;; Override lang detection
+  (add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
+)
+#+END_SRC
+
+* Elixir LSP
+
+#+BEGIN_SRC emacs-lisp
+;; Elixir LSP
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("nextls" "--stdio"))
+                    :multi-root t
+                    :activation-fn (lsp-activate-on "elixir")
+                    :server-id 'next-ls)))
+
+#+END_SRC
+
+* 1Password
+
+I've been using 1Password while working on Pagerduty and it is awesome, this is how i integrate it:
+
+#+BEGIN_SRC emacs-lisp
+;; Enable auth-source
+(after! auth-source
+
+  ;; Setup 1Password as an auth-source backend
+  (defun auth-source-op (host user port)
+    (let ((secret (shell-command-to-string "op item get 'GitHubForge' --fields password --reveal")))
+      (list (list :host host :user user :secret (lambda () (string-trim secret))))))
+
+  (setq auth-sources '(auth-source-op "~/.authinfo.gpg")
+        auth-source-do-cache t   ;; Cache results to avoid multiple lookups
+        auth-source-debug t
+        auth-source-cache-expiry 60) ;; Only 60 secs
+
+  (auth-source-search :host "api.github.com" :user "afromankenobi^forge")
+  )
+#+END_SRC
+
+* Mermaid Support
+
+Install the mermaid-cli: ~npm install -g @mermaid-js/mermaid-cli~.
+
+Then, add mermaid to org-bable config AND set mermaid-cli exec path:
+
+#+BEGIN_SRC emacs-lisp
+(after! ob
+  ;; Configure available languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell      . t)
+     (js         . t)
+     (emacs-lisp . t)
+     (elixir     . t)
+     (python     . t)
+     (ruby       . t)
+     (css        . t)
+     (R          . t)
+     (sql        . t)
+     (sqlite     . t)
+     (org        . t)
+     (sed        . t)
+     (csharp     . t)
+     (mermaid    . t)
+     (java       . t)))
+
+  ;; Interpreter settings
+  (setq org-babel-python-command "python3 -u"
+        org-confirm-babel-evaluate nil
+        ob-mermaid-cli-path "/Users/jvargas/.npm-global/bin/mmdc"))
+#+END_SRC
+
+* Configs for autocompletion:
+
+I use ~corfu~ and i need to add the ~cape-dict~ to the ~completion-at-point-functions~.
+
+#+BEGIN_SRC emacs-lisp
+
+;; Configure dictionary completion with Corfu
+(after! corfu
+  ;; Enable dictionary completion with Cape
+  (use-package! cape
+    :after corfu
+    :config
+    ;; Add cape-dict to completion-at-point-functions
+    (add-to-list 'completion-at-point-functions #'cape-dict)
+
+    ;; Set dictionary file path (adjust if needed)
+    (setq cape-dict-file "/usr/share/dict/words") ;; Change your dictionary path here depending on your OS
+
+    ;; Add dictionary completion to specific text modes
+    (add-hook! '(text-mode-hook
+                 markdown-mode-hook
+                 org-mode-hook)
+               (lambda ()
+                 (setq-local completion-at-point-functions
+                             (list (cape-capf-super
+                                    #'cape-dict
+                                    #'cape-dabbrev)))))
+
+    ;; Optional: Configure how completions are displayed
+    (setq cape-dict-case-fold t)  ;; Ignore case when completing
+    (setq cape-dict-aggressive nil))) ;; Don't be too aggressive with completions
+
+;; Improve spell checking configuration
+(after! ispell
+  ;; Set your preferred dictionary
+  (setq ispell-dictionary "en_US")
+
+  ;; Make sure suggestions appear when you check a word
+  (setq ispell-silently-savep t
+        ispell-following-word nil
+        ispell-highlight-face 'flyspell-incorrect))
+#+END_SRC
+
+* Custom keybindings
+
+I'm nostalgic of ~cmd+P~ for file searches, and i configure every single editor to behave the same: ~c-P~ for file searching, ~c-m-P~ for pattern searching.
+
+#+BEGIN_SRC emacs-lisp
+;; Completion and error navigation keybindings
+(map! :leader
+      (:prefix ("c" . "code")
+       ;; Completion - trigger various completion mechanisms
+       :desc "Complete (all sources)" "A" #'completion-at-point
+       :desc "Complete (dictionary)" "D" #'cape-dict
+       :desc "Complete (Copilot)" "g" #'copilot-complete
+
+       ;; Error navigation - unified interface to errors from all sources
+       ;; :desc "Next error" "n" #'next-error
+       ;; :desc "Previous error" "p" #'previous-error
+       ;; :desc "List errors" "l" #'flycheck-list-errors
+       ))
+
+;; Vim-like project navigation bindings
+(map! :nv "C-p" #'projectile-find-file          ;; Find files (like Vim's Ctrl-P)
+      :nv "C-f" #'+vertico/project-search)      ;; Find text patterns
+#+END_SRC
+
+* Previews
+
+#+BEGIN_SRC emacs-lisp
+;; Configure preview for search results
+(after! consult
+  ;; Enable automatic preview
+  (consult-customize
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   +default/search-project +default/search-other-project
+   +default/search-buffer +default/search-project-for-symbol-at-point
+   +default/search-cwd +default/search-other-cwd
+   +default/search-notes-for-symbol-at-point
+   +default/search-emacsd
+   ;; Set to show the preview at point
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Configure preview display
+  (setq consult-preview-key 'any       ;; Show preview on any key
+        consult-preview-max-count 10   ;; Preview up to 10 candidates
+        consult-preview-max-size 1024  ;; Preview files up to 1MB
+        consult-narrow-key "<"         ;; Narrow results with
+        consult-ripgrep-command "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip"))
+
+  ;; Use the most appropriate action by file type
+  (setq consult-project-root-function #'projectile-project-root
+        ;; Customize the narrowing keys for different categories
+        consult-narrow-key "<"
+        consult-widen-key ">"
+        ;; Show line numbers in preview
+        consult-line-numbers-widen t)
+
+;; Improve the appearance of preview
+(after! embark
+  (setq embark-action-indicator
+        (lambda (map _target)
+          (which-key--show-keymap "Embark" map nil nil 'no-paging)
+          #'which-key--hide-popup-ignore-command)
+        embark-become-indicator embark-action-indicator))
+
+#+END_SRC

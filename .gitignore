@@ -1,0 +1,27 @@
+# Ignore local configuration files
+*.local
+*.local.*
+
+# Do not ignore CLAUDE.md
+!CLAUDE.md
+
+# Ignore backup files
+*~
+*.bak
+*.backup
+
+# Ignore environment specific files
+.env
+.envrc
+.direnv/
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
