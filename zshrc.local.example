@@ -1,23 +1,23 @@
-# Example local configuration file for zsh
-# Copy this to ~/.zshrc.local and customize with your private settings
+# Private local configuration for zsh
+# This file is not tracked in git
 
-# Examples of API tokens retrieved from macOS Keychain
-# export API_KEY=$(security find-generic-password -a "$USER" -s "api_key_name" -w 2>/dev/null || echo "")
-# export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s "github_token" -w 2>/dev/null || echo "")
+# Load API tokens from macOS Keychain
+export EXAMPLE_TOKEN=$(security find-generic-password -a "$USER" -s "example_token" -w 2>/dev/null || echo "")
 
-# Examples of 1Password-stored secrets
-# export PRIVATE_TOKEN="op://Vault/Item/field"
+# 1Password-stored secrets
+export EXAMPLE_1PASSWORD_TOKEN="op://path/to/token"
 
-# Work folder specific tokens example
-# load_work_tokens() {
-#   local work_folder_pattern="$HOME/projects/*"
-#   if [[ "$PWD" =~ $work_folder_pattern ]]; then
-#     export PROJECT_TOKEN=$(security find-generic-password -a "$USER" -s "project_token" -w 2>/dev/null || echo "")
+# Function to load folder specific things if needed
+# Uncomment and customize if needed
+# example_function() {
+#   local example_folder_pattern="$HOME/blah/blablah/"
+#   if [[ "$PWD" =~ $example_folder_pattern ]]; then
+#     export EXAMPLE_1PASSWORD_TOKEN="op://path/to/token"
+#     export EXAMPLE_TOKEN=$(security find-generic-password -a "$USER" -s "example_token" -w 2>/dev/null || echo "")
 #   fi
 # }
-# 
-# add-zsh-hook chpwd load_work_tokens
-# load_work_tokens
 
-# Local path configurations
-# export PATH="$HOME/local/bin:$PATH"
+# execute function on change folder
+# https://github.com/rothgar/mastering-zsh/blob/master/docs/config/hooks.md
+# add-zsh-hook chpwd example_function
+# example_function

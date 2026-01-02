@@ -1,8 +1,18 @@
+#+title: Packages
+#+property: header-args:emacs-lisp :tangle packages.el :comments link
+
+* Additional packages
+
+All packages that need to be installed via Doom's package manager.
+After modifying this file, run ~doom sync~ to install/update packages.
+
+#+BEGIN_SRC emacs-lisp
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or
+;; use 'M-x doom/reload'.
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
@@ -47,9 +57,56 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+#+END_SRC
 
+** AI & Code Assistance
+
+GitHub Copilot and Claude Code IDE integration for AI-assisted coding.
+
+#+BEGIN_SRC emacs-lisp
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
+(package! gptel :recipe (:nonrecursive t))
+#+END_SRC
 
+** Org-mode Extensions
+
+Additional org-mode packages for enhanced functionality.
+
+#+BEGIN_SRC emacs-lisp
 (package! org-contrib)
 (package! ob-mermaid)
+(package! svg-lib)
+(package! ox-gfm)
+(package! org-reveal)
+(package! ox-reveal)
+#+END_SRC
+
+** UI Enhancements
+
+Visual improvements for the editor interface.
+
+#+BEGIN_SRC emacs-lisp
+(package! kind-icon)
+#+END_SRC
+
+** AI Shell Integration
+
+Agent-based shell interactions using AI.
+
+#+BEGIN_SRC emacs-lisp
+(package! shell-maker)
+(package! acp :recipe (:host github :repo "xenodium/acp.el"))
+(package! agent-shell :recipe (:host github :repo "xenodium/agent-shell"))
+#+END_SRC
+
+** Environment Management
+
+Directory-specific environment variable management with direnv.
+
+#+BEGIN_SRC emacs-lisp
+(package! envrc)
+#+END_SRC
+

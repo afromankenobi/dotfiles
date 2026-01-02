@@ -1,0 +1,70 @@
+# Brewfile.minimal - Essential packages for dotfiles setup
+# This is a curated list of packages required for the dotfiles to work properly
+# Install with: brew bundle install --file=Brewfile.minimal
+
+# ============================================================================
+# TAPS
+# ============================================================================
+tap "d12frosted/emacs-plus"             # Required for Emacs Plus
+tap "homebrew/bundle"
+
+# ============================================================================
+# SHELL & TERMINAL ESSENTIALS
+# ============================================================================
+brew "zsh-autosuggestions"              # Required by zshrc
+brew "zsh-syntax-highlighting"          # Required by zshrc
+brew "zoxide"                           # Required by zshrc (cd replacement)
+brew "starship"                         # Required by zshrc (prompt)
+brew "tmux"                             # Terminal multiplexer
+brew "eza"                              # Modern ls (used in zshrc)
+brew "bat"                              # Better cat (used for man pages)
+brew "direnv"                           # Directory-specific env vars
+brew "fzf"                              # Fuzzy finder
+
+# ============================================================================
+# CORE DEVELOPMENT TOOLS
+# ============================================================================
+brew "git"                              # Version control
+brew "ripgrep"                          # Fast search (rg)
+brew "fd"                               # Fast find
+brew "neovim"                           # Text editor
+
+# ============================================================================
+# EMACS & DEPENDENCIES
+# ============================================================================
+brew "aspell"                           # Spell checker for Emacs
+brew "gnutls"                           # Required for Emacs networking
+brew "libgccjit"                        # Required for Emacs native-comp
+brew "libvterm"                         # Required for Emacs vterm
+brew "poppler"                          # Required for Emacs pdf-tools
+brew "pinentry-mac"                     # GPG passphrase entry
+brew "gnupg"                            # GPG for Emacs
+brew "imagemagick"                      # Image processing for Emacs
+brew "graphviz"                         # Graph visualization for org-mode
+brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-imagemagick", "with-xwidgets"]
+
+# ============================================================================
+# LANGUAGE SERVERS (for Emacs LSP)
+# ============================================================================
+brew "marksman"                         # Markdown language server
+brew "yaml-language-server"             # YAML language server
+
+# ============================================================================
+# PROGRAMMING LANGUAGES & VERSION MANAGERS
+# ============================================================================
+brew "asdf"                             # Multi-language version manager
+
+# ============================================================================
+# UTILITIES
+# ============================================================================
+brew "jq"                               # JSON processor
+
+# ============================================================================
+# FONTS
+# ============================================================================
+cask "font-meslo-lg-nerd-font"          # Required by Doom Emacs config
+
+# ============================================================================
+# CARGO (Rust) PACKAGES
+# ============================================================================
+cargo "emacs-lsp-booster"               # LSP performance booster for Emacs

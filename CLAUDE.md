@@ -4,97 +4,167 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This repository contains dotfiles for a development environment primarily focused on:
+Personal dotfiles repository with a focus on:
+- **Doom Emacs** (primary editor) with literate configuration approach
+- **Zsh** with oh-my-zsh for shell environment
+- **Tmux** for terminal multiplexing
+- **Vim/Neovim** as secondary editors
 
-- Doom Emacs as the primary editor with a literate configuration
-- Zsh (with oh-my-zsh) as the shell
-- Tmux for terminal multiplexing
-- Vim/Neovim as secondary text editors
-- Alacritty as a terminal emulator
+## Configuration Architecture
 
-## Key Configuration Files
+### Literate Configuration Pattern (Doom Emacs)
 
-- `doom/`: Doom Emacs configuration files
-  - `config.org`: Literate configuration with embedded Emacs Lisp
-  - `init.el`: Doom modules configuration
-  - `packages.el`: Additional package declarations
-- `zshrc`: Zsh shell configuration with plugins, environment variables, and aliases
-- `tmux/tmux.conf`: Tmux configuration with key bindings and visual customizations
-- `vim/vimrc`: Vim editor configuration
-- `vim/nvimrc.lua`: Neovim configuration using Lua with LSP and plugin setup
-- `alacritty.toml`: Alacritty terminal emulator configuration
-- `emacs`: Legacy Emacs configuration with Evil mode and basic org-mode setup
+The Doom Emacs configuration uses literate programming for most config files:
 
-## Common Workflows
+**What is literate?**
+- `doom/config.org` → generates → `doom/config.el` (via tangling)
+- `doom/packages.org` → generates → `doom/packages.el` (via tangling)
+- `doom/init.el` → stays as `.el` (Doom convention for module flags)
 
-### Symlink dotfiles
+**Why is `init.el` not literate?**
+- It's mostly just enabling/disabling Doom modules with flags
+- Changes infrequently (only when adding/removing major features)
+- Doom community convention is to keep it as `.el`
+- The file is self-documenting with comments
+- *Could* be converted to `init.org` but offers minimal benefit
 
-To set up these dotfiles, create symbolic links from this repository to the appropriate locations:
+**CRITICAL: Only edit the `.org` source files, never the generated `.el` files!**
+
+The `.el` files are automatically generated when you:
+- Run `doom sync`
+- Save a `.org` file with auto-tangle enabled
+- Manually tangle with `C-c C-v t` in Emacs
+
+The generated `.el` files are in `.gitignore` and should not be committed.
+
+**Literate workflow:**
+1. Edit `config.org` or `packages.org`
+2. Run `doom sync` to tangle and apply changes
+3. Only the `.org` files are tracked in git
+
+Key architectural decisions in the Emacs config:
+- Most settings wrapped in `after!` blocks to load after Doom's defaults
+- File/directory variables (like `org-directory`) set before package loading
+- LSP using `eglot` instead of `lsp-mode`
+- GitHub Copilot integrated with Corfu completion framework
+
+### Modular Shell Configuration (Zsh)
+
+The `zshrc` follows a strict loading order that should be preserved:
+1. Oh-My-Zsh configuration (must load first, enables plugins)
+2. Editor & terminal settings
+3. PATH configuration (all in one section)
+4. Tool-specific configuration
+5. Aliases (after tools are configured)
+6. Local configuration (last, can override anything)
+
+**Important**: Private/machine-specific settings go in `~/.zshrc.local` (not tracked in git). See `zshrc.local.example` for structure.
+
+### Named Colors Pattern (Tmux)
+
+Tmux configuration defines colors with semantic names at the top:
+- Color definitions: `color_orange="colour208"`
+- Functional assignments: `color_active="$color_orange"`
+
+To change the color scheme, modify only the color definitions section. This pattern makes theme changes centralized and clear.
+
+## Common Commands
+
+### Doom Emacs
 
 ```bash
-# Zsh
-ln -sf ~/dotfiles/zshrc ~/.zshrc
+# Apply configuration changes after editing config.org
+doom sync
 
-# Tmux
-ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
+# Upgrade Doom and packages
+doom upgrade
 
-# Vim
-mkdir -p ~/.vim
-ln -sf ~/dotfiles/vim/vimrc ~/.vimrc
-ln -sf ~/dotfiles/vim/vimrc.bundles ~/.vimrc.bundles
+# Rebuild Doom (if things break)
+doom build
 
-# Neovim
-mkdir -p ~/.config/nvim
-ln -sf ~/dotfiles/vim/nvimrc.lua ~/.config/nvim/init.lua
-
-# Alacritty
-mkdir -p ~/.config/alacritty
-ln -sf ~/dotfiles/alacritty.toml ~/.config/alacritty/alacritty.toml
-
-# Doom Emacs
-# (First install Doom Emacs: https://github.com/doomemacs/doomemacs)
-mkdir -p ~/.config/doom
-ln -sf ~/dotfiles/doom/config.org ~/.config/doom/config.org
-ln -sf ~/dotfiles/doom/init.el ~/.config/doom/init.el
-ln -sf ~/dotfiles/doom/packages.el ~/.config/doom/packages.el
-# Run 'doom sync' after linking these files
-
-# Legacy Emacs (if not using Doom)
-# ln -sf ~/dotfiles/emacs ~/.emacs
+# Check for issues
+doom doctor
 ```
 
-### Tmux Commands
+### Tmux Key Bindings
 
-- `tmux new -s <session-name>`: Create a new named session
-- `tmux attach -t <session-name>`: Attach to an existing session
-- `prefix + R`: Reload tmux configuration (prefix is typically Ctrl+b)
-- `prefix + S`: Create a new session
-- `prefix + %`: Split window horizontally
-- `prefix + ´`: Split window vertically
-- `prefix + h/j/k/l`: Navigate between panes (Vim-like navigation)
+Custom keybindings (prefix is typically Ctrl+b):
+- `prefix + R`: Reload tmux configuration
+- `prefix + S`: Create new session
+- `prefix + h/j/k/l`: Navigate panes (Vim-style)
 - `prefix + K`: Clear screen and history
+- `prefix + ´`: Split vertically (custom)
+- Copy mode: `prefix + ` ` (backtick)
+- Paste: `prefix + +`
 
-### Neovim/Vim Setup
+### Installation/Symlinking
 
-The configuration includes:
-- LSP support for multiple languages
-- Completion with nvim-cmp
-- Mason for LSP and tool management
-- Formatter for code formatting
+**Important:** The files in this repository must be **symlinked** to their target locations, not copied.
 
-### Emacs Configuration
+See `README.md` for complete installation instructions. Key points:
 
-The Emacs configuration includes:
-- Evil mode for Vim keybindings
-- Org-mode setup with custom capture templates and agenda
-- Doom themes and modeline
+1. **Install Doom Emacs first** before symlinking config files
+2. **Symlink the `.org` source files**, not the generated `.el` files
+3. **Run `doom sync`** after symlinking to generate `.el` files
+4. **Never copy files** - always use `ln -sf` to create symlinks
 
-## Tool Dependencies
+Quick reference for Doom:
+```bash
+# Symlink source files
+ln -sf ~/dotfiles/doom/config.org ~/.config/doom/config.org
+ln -sf ~/dotfiles/doom/packages.org ~/.config/doom/packages.org
+ln -sf ~/dotfiles/doom/init.el ~/.config/doom/init.el
 
-This dotfiles setup depends on:
-- Oh-My-Zsh for Zsh enhancements
-- Atuin for shell history
-- Zoxide for directory jumping
-- EZA for ls replacement
-- Nerd Fonts (specifically MesloLGSDZ Nerd Font)
-- Various language servers for Neovim LSP support
+# Generate .el files
+doom sync
+```
+
+## Design Principles (from RATIONALE.md)
+
+These principles guide configuration decisions:
+
+1. **Clarity Over Brevity**: Verbose but clear is preferred over concise but cryptic
+2. **Separation of Concerns**: Each tool has its own file; sections are clearly grouped
+3. **Privacy & Security**: Sensitive data goes in local files (not tracked)
+4. **Progressive Enhancement**: Configs work even when some tools are missing
+5. **Visual Hierarchy**: Section headers and comments create scannable structure
+
+## Key Files
+
+**Doom Emacs (literate sources - these are tracked in git):**
+- `doom/config.org`: Literate Doom Emacs configuration (SOURCE - edit this)
+- `doom/packages.org`: Package declarations (SOURCE - edit this)
+- `doom/init.el`: Doom modules declaration (kept as `.el` by convention)
+
+**Doom Emacs (generated - NOT tracked in git):**
+- `doom/config.el`: Generated from `config.org` (DO NOT EDIT)
+- `doom/packages.el`: Generated from `packages.org` (DO NOT EDIT)
+
+**Other configuration:**
+- `zshrc`: Shell configuration with strict loading order
+- `zshrc.local.example`: Template for machine-specific settings
+- `tmux/tmux.conf`: Tmux with named colors pattern
+- `RATIONALE.md`: Explains the "why" behind configuration choices
+
+## Dependencies
+
+Core tools expected to be installed:
+- Doom Emacs with MesloLGSDZ Nerd Font
+- Oh-My-Zsh
+- Atuin (shell history)
+- Zoxide (directory jumping, aliased to `cd`)
+- Eza (modern ls replacement)
+- direnv (directory-specific environment variables)
+
+For Emacs LSP support:
+- Language servers vary by language (configured in `doom/config.org`)
+- Elixir: NextLS or ElixirLS
+- Ruby: ruby-lsp
+- Markdown: marksman
+
+## Cross-Platform Considerations
+
+The tmux configuration adapts to the platform:
+- macOS: Uses `pbcopy` for clipboard
+- Linux: Uses `xclip` or `xsel` if available
+- Ruby/Rails version display: Only shows if commands exist

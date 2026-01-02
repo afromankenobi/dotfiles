@@ -26,3 +26,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Doom Emacs generated files (tangled from .org files)
+doom/config.el
+doom/packages.el

@@ -12,10 +12,6 @@ export ZSH_TMUX_AUTONAME_SESSION=true
 # ZSH Completion path
 export FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
-# FZF configuration
-export DISABLE_FZF_KEY_BINDINGS="true"
-export FZF_DEFAULT_COMMAND='rg --column --line-number --color=always --smart-case --files --hidden --glob "!.git/*"'
-
 # Zoxide configuration (directory jumping)
 export ZOXIDE_CMD_OVERRIDE="cd"
 
@@ -26,7 +22,7 @@ plugins=(
     brew
     bundler
     gem
-    
+
     # Languages & frameworks
     ruby
     rails
@@ -35,16 +31,16 @@ plugins=(
     pylint
     mix # Try mix-fast if this is too slow
     terraform
-    
+
     # DevOps & cloud tools
     ansible
     aws
     docker
     docker-compose
-    
+
     # Version control
     git
-    
+
     # System utilities
     sudo
     man
@@ -53,19 +49,19 @@ plugins=(
     fossil
     mosh
     nmap
-    
+
     # Terminal enhancements
     colorize
     eza
-    fzf
+    # fzf
     zsh-interactive-cd
     tmux
     zoxide
     starship
-    
+
     # Build tools
     rake-fast
-    
+
     # JavaScript/npm tools
     yarn
 )
@@ -87,9 +83,6 @@ export LSP_USE_PLISTS=true
 
 # Brew prefix for use in multiple places
 export BREW_PREFIX=$(brew --prefix)
-
-# Terminal integration for iTerm2
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 #------------------------------------------------------------------------------
 # PATH CONFIGURATION
@@ -142,24 +135,19 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion atuin)
 eval "$(atuin init zsh)"
 
 # SAML authentication for AWS
-eval "$(saml2aws --completion-script-zsh)"
+# eval "$(saml2aws --completion-script-zsh)"
 
 # 1Password plugin
 source $HOME/.config/op/plugins.sh
-
-# Docker completions
-fpath=($HOME/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
 
 #------------------------------------------------------------------------------
 # ALIASES
 #------------------------------------------------------------------------------
 # Modern alternatives to classic tools
 # alias cd=z # from zoxide! not zcd
-alias code=code-insiders
-alias cp=xcp
-alias find=fd
+# alias code=code-insiders
+# alias cp=xcp
+# alias find=fd
 
 #------------------------------------------------------------------------------
 # LOCAL CONFIGURATION
@@ -169,3 +157,13 @@ alias find=fd
 if [[ -f "$HOME/.zshrc.local" ]]; then
     source "$HOME/.zshrc.local"
 fi
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/jvargas/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+export PATH="$PATH:/opt/homebrew/opt/curl/bin"
+
+eval "$(direnv hook zsh)"

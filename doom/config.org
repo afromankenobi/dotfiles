@@ -10,9 +10,15 @@ I'm trying to take advantage of LP while transitioning from Spacemacs to doom Em
 * Base Doom Configuration
 ** Core Settings
 These are the fundamental settings that Doom Emacs needs to function as I prefer.
-Some of these must be set before packages are loaded.
+Some of these must be set before packages load.
 
 #+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold 100000000);;
+(setq read-process-output-max (* 10 1024 1024))  ; 10MB, helps large JSON
+
+(require 'acp)
+(require 'agent-shell)
+
 ;;; config.el -*- lexical-binding: t; -*-
 
 ;; Font Configuration
@@ -27,14 +33,17 @@ Some of these must be set before packages are loaded.
 
 ;; Theme Configuration
 ;; Load one of Doom's gorgeous themes
-(setq doom-theme 'doom-one)
+;; (setq doom-theme 'doom-acario-dark)
+;; I use solaire-mode to make the active buffer stand out
+;; Awesome tool tbh, didn't knew that it would be THAT useful.
+(solaire-global-mode +1)
 
 ;; Line Numbers
 ;; Options: t (absolute), 'relative, or nil (disabled)
 (setq display-line-numbers-type 'relative)
 
 ;; Org Directory
-;; Must be set before org loads!
+;; Must be sEt before org loads!
 (setq org-directory "~/orgfiles/")
 
 ;; Enable `variable-pitch-mode` in all buffers
@@ -90,9 +99,14 @@ These are the basic configurations that control how org-mode behaves, including 
 
 #+BEGIN_SRC emacs-lisp
 (after! org
+  ;; Load additional exporters
+  (require 'ox-gfm nil t)
+  ;; (require 'ox-md)
+
   ;; I like to have an explanation when i move things to ~done~, ~canceled~, ~next~ and ~waiting~.
   (setq org-todo-keywords
         '((sequence "TODO(t!)" "WAITING(w@/!)" "NEXT(n@/!)" "|" "DONE(d@/!)" "CANCELLED(c@/!)")))
+
   ;; Timestamp and logging configurations
   (setq org-log-done 'time
         org-log-redeadline 'time
@@ -118,6 +132,24 @@ These are the basic configurations that control how org-mode behaves, including 
            "* %?\nEntered on %U\n  %i\n  %a"))))
 #+END_SRC
 
+** Org-Download
+
+#+begin_src emacs-lisp
+(after! org-download
+  (setq org-download-method 'directory)
+
+  (defun jv/org-download-image-dir ()
+    (concat (file-name-sans-extension (buffer-file-name)) "-images"))
+  (setq org-download-image-dir #'jv/org-download-image-dir)
+
+  ;; Relative links[[file:...]]
+  (setq org-download-link-format "[[file:%s]]\n"
+        org-download-abbreviate-filename-function #'file-relative-name)
+
+  ;; Previsualizer width
+  (setq org-download-image-org-width 600)
+  (setq-default org-download-heading-lvl nil))
+#+end_src
 * Agenda
 ** Look all ORG_DIR for TODOs
 I know that i'm messy, so search everywhere to prevent forgetting.
@@ -134,22 +166,24 @@ Setting up org-babel for various programming languages and their configurations.
 #+BEGIN_SRC emacs-lisp
 (after! ob
   ;; Configure available languages
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((shell      . t)
-     (js         . t)
-     (emacs-lisp . t)
-     (elixir     . t)
-     (python     . t)
-     (ruby       . t)
-     (css        . t)
-     (R          . t)
-     (sql        . t)
-     (sqlite     . t)
-     (org        . t)
-     (sed        . t)
-     (csharp     . t)
-     (java       . t)))
+  ;; Doom doc's says this is not required here:
+  ;; https://github.com/doomemacs/doomemacs/blob/master/docs/getting_started.org#using-org-babel-do-load-languages-to-load-your-babel-packages
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((shell      . t)
+  ;;    (js         . t)
+  ;;    (emacs-lisp . t)
+  ;;    (elixir     . t)
+  ;;    (python     . t)
+  ;;    (ruby       . t)
+  ;;    (css        . t)
+  ;;    (R          . t)
+  ;;    (sql        . t)
+  ;;    (sqlite     . t)
+  ;;    (org        . t)
+  ;;    (sed        . t)
+  ;;    (csharp     . t)
+  ;;    (java       . t)))
 
   ;; Interpreter settings
   (setq org-babel-python-command "python3 -u"
@@ -177,28 +211,41 @@ I'm experimenting with Copilot. Not so good yet but i will keep trying:
   ;; Optional: Control when Copilot tries to complete
   ;; For example, only enable Copilot in insert mode if you use Evil:
   (setq copilot-enable-predicates '(evil-insert-state-p))
+
   ;; Configure indent config per language
   (add-to-list 'copilot-indentation-alist '(prog-mode 2))
   (add-to-list 'copilot-indentation-alist '(org-mode 2))
   (add-to-list 'copilot-indentation-alist '(text-mode 2))
   (add-to-list 'copilot-indentation-alist '(closure-mode 2))
   (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2))
+
   ;; Override lang detection
   (add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
 )
 #+END_SRC
 
-* Elixir LSP
+* LSPs
 
 #+BEGIN_SRC emacs-lisp
-;; Elixir LSP
-(after! lsp-mode
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection '("nextls" "--stdio"))
-                    :multi-root t
-                    :activation-fn (lsp-activate-on "elixir")
-                    :server-id 'next-ls)))
+(after! eglot
+  ;; Elixir LSP
+  (add-to-list 'eglot-server-programs
+               `(elixir-mode . ,(eglot-alternatives
+                               '(("nextls" "--stdio")
+                                 ("~/code/elixir-ls/language_server.sh")))))
+  ;; This is optional. It automatically runs `M-x eglot` for you whenever you are in `elixir-mode`:
+  (add-hook 'elixir-mode-hook 'eglot-ensure)
 
+  ;; Avoid symlinks crash
+  ;; (setq find-file-visit-truename t)
+
+  ;; Ruby LSP
+  (add-to-list 'eglot-server-programs '((ruby-mode ruby-ts-mode) "ruby-lsp"))
+
+  ;; Markdown AI (?)
+  (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
+  (add-hook 'markdown-mode-hook #'eglot-ensure)
+)
 #+END_SRC
 
 * 1Password
@@ -227,7 +274,7 @@ I've been using 1Password while working on Pagerduty and it is awesome, this is 
 
 Install the mermaid-cli: ~npm install -g @mermaid-js/mermaid-cli~.
 
-Then, add mermaid to org-bable config AND set mermaid-cli exec path:
+Then, add mermaid to org-babel config AND set mermaid-cli exec path:
 
 #+BEGIN_SRC emacs-lisp
 (after! ob
@@ -264,6 +311,9 @@ I use ~corfu~ and i need to add the ~cape-dict~ to the ~completion-at-point-func
 
 ;; Configure dictionary completion with Corfu
 (after! corfu
+  (setq corfu-auto t) ;; Enable auto completion
+  (setq corfu-preview-current t)
+
   ;; Enable dictionary completion with Cape
   (use-package! cape
     :after corfu
@@ -299,30 +349,6 @@ I use ~corfu~ and i need to add the ~cape-dict~ to the ~completion-at-point-func
         ispell-highlight-face 'flyspell-incorrect))
 #+END_SRC
 
-* Custom keybindings
-
-I'm nostalgic of ~cmd+P~ for file searches, and i configure every single editor to behave the same: ~c-P~ for file searching, ~c-m-P~ for pattern searching.
-
-#+BEGIN_SRC emacs-lisp
-;; Completion and error navigation keybindings
-(map! :leader
-      (:prefix ("c" . "code")
-       ;; Completion - trigger various completion mechanisms
-       :desc "Complete (all sources)" "A" #'completion-at-point
-       :desc "Complete (dictionary)" "D" #'cape-dict
-       :desc "Complete (Copilot)" "g" #'copilot-complete
-
-       ;; Error navigation - unified interface to errors from all sources
-       ;; :desc "Next error" "n" #'next-error
-       ;; :desc "Previous error" "p" #'previous-error
-       ;; :desc "List errors" "l" #'flycheck-list-errors
-       ))
-
-;; Vim-like project navigation bindings
-(map! :nv "C-p" #'projectile-find-file          ;; Find files (like Vim's Ctrl-P)
-      :nv "C-f" #'+vertico/project-search)      ;; Find text patterns
-#+END_SRC
-
 * Previews
 
 #+BEGIN_SRC emacs-lisp
@@ -338,14 +364,14 @@ I'm nostalgic of ~cmd+P~ for file searches, and i configure every single editor 
    +default/search-notes-for-symbol-at-point
    +default/search-emacsd
    ;; Set to show the preview at point
-   :preview-key '(:debounce 0.4 any))
+   :preview-key '(:debounce 0.1 any))
 
   ;; Configure preview display
   (setq consult-preview-key 'any       ;; Show preview on any key
         consult-preview-max-count 10   ;; Preview up to 10 candidates
-        consult-preview-max-size 1024  ;; Preview files up to 1MB
+        consult-preview-max-size 2048  ;; Preview files up to 2MB
         consult-narrow-key "<"         ;; Narrow results with
-        consult-ripgrep-command "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip"))
+        consult-ripgrep-command "rg --null --line-buffered --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip"))
 
   ;; Use the most appropriate action by file type
   (setq consult-project-root-function #'projectile-project-root
@@ -364,3 +390,76 @@ I'm nostalgic of ~cmd+P~ for file searches, and i configure every single editor 
         embark-become-indicator embark-action-indicator))
 
 #+END_SRC
+
+* Kind icons
+
+I discovered this and love it!
+
+#+BEGIN_SRC emacs-lisp
+(after! corfu
+  (use-package! kind-icon
+    :after corfu
+    :config
+    ;; Enable kind-icon in corfu
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
+#+END_SRC
+
+* Neotree
+
+#+begin_src emacs-lisp
+(use-package! neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+#+end_src
+
+* Claude code (!!!)
+
+#+begin_src emacs-lisp
+(after! claude-code-ide
+  ; :bind (map :leader
+  ;            (:prefix ("c" . "code")
+  ;             :desc "Open claude-code" "C" #'claude-code-ide-menu)
+  ;            )
+  :config
+  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+#+end_src
+
+* GPTel
+
+#+begin_src emacs-lisp
+(use-package! gptel
+ :config
+ (setq! gptel-api-key (getenv "OPENAI_API_KEY"))
+ (gptel-make-ollama "Ollama"
+             :host "localhost:11434"
+             :stream t
+             :models '(DeepSeek-R1:latest))
+ (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
+ (gptel-make-kagi "Kagi" :key (getenv "KAGI_API_TOKEN"))
+ (gptel-make-anthropic "Claude" :stream t :key (getenv "CLAUDE_API_TOKEN"))
+ (gptel-make-anthropic "Claude-thinking"
+  :key (getenv "CLAUDE_API_TOKEN")
+  :stream t
+  :models '(claude-opus-4-1-sonnet-20250805 claude-sonnet-4-20250514 claude-3-7-sonnet-20250219)
+  :request-params '(:thinking (:type "enabled")))
+ (gptel-make-gh-copilot "Copilot"))
+#+end_src
+
+* Org-reveal
+
+#+begin_src emacs-lisp
+(after! org
+  (load-library "ox-reveal"))
+#+end_src
+
+* direnv integration
+
+#+begin_src emacs-lisp
+(use-package! envrc
+  :hook (after-init . envrc-global-mode)  ; or just for prog-mode if you prefer
+  :config
+  (envrc-global-mode))
+#+end_src
+
+#+RESULTS:
+| doom-init-fonts-h | doom-init-theme-h | envrc-global-mode | org-persist-load-all | ns-auto-titlebar-set-all-frames | tramp-register-archive-autoload-file-name-handler | magit-maybe-define-global-key-bindings | table--make-cell-map |
