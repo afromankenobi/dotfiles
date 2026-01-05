@@ -6,7 +6,6 @@
 # TAPS
 # ============================================================================
 tap "d12frosted/emacs-plus"             # Required for Emacs Plus
-tap "homebrew/bundle"
 
 # ============================================================================
 # SHELL & TERMINAL ESSENTIALS
@@ -41,7 +40,6 @@ brew "pinentry-mac"                     # GPG passphrase entry
 brew "gnupg"                            # GPG for Emacs
 brew "imagemagick"                      # Image processing for Emacs
 brew "graphviz"                         # Graph visualization for org-mode
-brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-imagemagick", "with-xwidgets"]
 
 # ============================================================================
 # LANGUAGE SERVERS (for Emacs LSP)
