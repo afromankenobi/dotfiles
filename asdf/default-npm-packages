@@ -1,0 +1,30 @@
+# Node.js packages installed automatically with each new Node version via asdf
+# One package per line
+@anthropic-ai/claude-code
+@mermaid-js/mermaid-cli
+@modelcontextprotocol/server-github
+babel
+babel-eslint
+bash-language-server
+coffeelint
+coffeesense-language-server
+dockerfile-language-server-nodejs
+eslint
+eslint-plugin-react
+express
+lodash
+markdown
+marked
+mcp-remote
+npm
+pnpm
+prettier
+request
+textlit
+tree-sitter-javascript
+vmd
+vscode-html-languageserver-bin
+vscode-langservers-extracted
+yarn
+typescript
+typescript-language-server

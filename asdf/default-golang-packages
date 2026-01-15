@@ -1,0 +1,5 @@
+# Go packages installed automatically with each new Go version via asdf
+# One package per line (use full go install paths)
+golang.org/x/tools/gopls@latest
+github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+mvdan.cc/gofumpt@latest

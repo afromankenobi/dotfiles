@@ -1,0 +1,3 @@
+# Elixir packages installed automatically with each new Elixir version via asdf
+# One package per line
+elixir_ls

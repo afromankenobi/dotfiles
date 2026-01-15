@@ -1,0 +1,22 @@
+# Python packages installed automatically with each new Python version via asdf
+# One package per line
+Cython
+PyQt6-WebEngine
+ansible
+black
+cmake-language-server
+flask
+grip
+nose
+pipenv
+poetry
+pyls
+pyright
+pytest
+terminal-controller
+tree-sitter-python
+python-lsp-server
+pylsp-mypy
+python-lsp-black
+pylsp-rope
+ruff

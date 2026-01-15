@@ -1,0 +1,5 @@
+# Rust crates installed automatically with each new Rust version via asdf
+# One package per line
+rust-analyzer
+clippy
+rustfmt
