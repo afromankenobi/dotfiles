@@ -59,6 +59,31 @@ cp ~/dotfiles/zsh/zshrc.local.example ~/.zshrc.local
 source ~/.zshrc
 ```
 
+#### asdf
+
+[asdf](https://asdf-vm.com/) is a version manager for multiple languages/tools. The configuration includes:
+- `tool-versions`: Defines which versions to use globally
+- `default-*` files: Auto-install packages when new versions are installed
+
+```bash
+# Symlink asdf configuration
+ln -sf ~/dotfiles/asdf/tool-versions ~/.tool-versions
+
+# Symlink default package files (creates ~/.default-* files)
+ln -sf ~/dotfiles/asdf/default-cargo-crates ~/.default-cargo-crates
+ln -sf ~/dotfiles/asdf/default-elixir-packages ~/.default-elixir-packages
+ln -sf ~/dotfiles/asdf/default-gems ~/.default-gems
+ln -sf ~/dotfiles/asdf/default-golang-packages ~/.default-golang-packages
+ln -sf ~/dotfiles/asdf/default-npm-packages ~/.default-npm-packages
+ln -sf ~/dotfiles/asdf/default-python-packages ~/.default-python-packages
+
+# Install versions defined in .tool-versions
+# This will auto-install missing plugins and then install the versions
+asdf install
+```
+
+**Note:** The `default-*` files automatically install packages whenever you install a new version of that language. For example, `default-gems` installs Ruby gems automatically when you run `asdf install ruby <version>`.
+
 #### Tmux
 
 ```bash
