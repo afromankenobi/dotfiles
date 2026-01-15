@@ -50,10 +50,10 @@ cd ~/dotfiles
 #### Zsh
 
 ```bash
-ln -sf ~/dotfiles/zshrc ~/.zshrc
+ln -sf ~/dotfiles/zsh/zshrc ~/.zshrc
 
 # Create local config file for machine-specific settings
-cp ~/dotfiles/zshrc.local.example ~/.zshrc.local
+cp ~/dotfiles/zsh/zshrc.local.example ~/.zshrc.local
 # Edit ~/.zshrc.local with your machine-specific settings
 
 source ~/.zshrc
@@ -132,7 +132,7 @@ ln -sf ~/dotfiles/alacritty.toml ~/.config/alacritty/alacritty.toml
 For machine-specific settings (API keys, local paths, etc.):
 
 - **Zsh**: Edit `~/.zshrc.local` (not tracked in git)
-- Use `~/dotfiles/zshrc.local.example` as a template
+- Use `~/dotfiles/zsh/zshrc.local.example` as a template
 
 ## Maintaining Dependencies
 
