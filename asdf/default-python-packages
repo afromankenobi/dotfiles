@@ -13,7 +13,6 @@ poetry
 pyls
 pyright
 pytest
-terminal-controller
 tree-sitter-python
 python-lsp-server
 pylsp-mypy
