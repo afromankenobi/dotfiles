@@ -97,9 +97,11 @@ Visual improvements for the editor interface.
 Agent-based shell interactions using AI.
 
 #+BEGIN_SRC emacs-lisp
+;; I want to test Agent Shell with Agent Protocol
+;; Check https://agentclientprotocol.com/get-started/introduction
 (package! shell-maker)
-(package! acp :recipe (:host github :repo "xenodium/acp.el"))
-(package! agent-shell :recipe (:host github :repo "xenodium/agent-shell"))
+(package! acp)
+(package! agent-shell)
 #+END_SRC
 
 ** Environment Management
