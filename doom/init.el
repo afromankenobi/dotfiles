@@ -95,6 +95,7 @@
        editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
+       llm
        (lookup +dictionary +docsets +offline)              ; navigate your code and its documentation
        (lsp +eglot +booster)
        (magit +forge)             ; a git porcelain for Emacs
@@ -115,8 +116,8 @@
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
        (cc +lsp +tree-sitter)         ; C > C++ == 1
-       ;;clojure           ; java with a lisp
-       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       clojure           ; java with a lisp
+       common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        (crystal +lsp +tree-sitter)           ; ruby at the speed of c
        (csharp +dotnet +lsp +tree-sitter)            ; unity, .NET, and mono shenanigans
@@ -154,7 +155,7 @@
        ;;ocaml             ; an objective camel
        (org +contacts +dragndrop +crypt +gnuplot +hugo +journal +jupyter +noter +pandoc +passwords +pomodoro +present +pretty)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
-       ;;plantuml          ; diagrams for confusing people more
+       plantuml          ; diagrams for confusing people more
        graphviz          ; diagrams for confusing yourself even more
        ;;purescript        ; javascript, but functional
        (python +lsp +tree-sitter)           ; beautiful is better than ugly
@@ -162,7 +163,7 @@
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        (rest +jq)              ; Emacs as a REST client
-       ;;rst               ; ReST in peace
+       rst               ; ReST in peace
        (ruby +lsp +rails +tree-sitter)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        (rust +lsp +tree-sitter)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
@@ -174,7 +175,7 @@
        ;;terra             ; Earth and Moon in alignment for performance.
        (web +lsp +tree-sitter)               ; the tubes
        (yaml +lsp +tree-sitter)              ; JSON, but readable
-       ;;zig               ; C, but simpler
+       zig               ; C, but simpler
 
        :email
        (mu4e +org +gmail)

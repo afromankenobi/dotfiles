@@ -5,7 +5,7 @@
 * Introduction
 I started using Emacs a while ago, mainly because of org-mode.
 Org-mode is an amazing tool, but it needs some work to be as I want. This is my attempt to create a literate config for it.
-I'm trying to take advantage of LP while transitioning from Spacemacs to doom Emacs.
+I'm trying to take advantage of LP while transitioning from Spacemacs to Doom Emacs.
 
 * Base Doom Configuration
 ** Core Settings
@@ -16,6 +16,7 @@ Some of these must be set before packages load.
 (setq gc-cons-threshold 100000000);;
 (setq read-process-output-max (* 10 1024 1024))  ; 10MB, helps large JSON
 
+;; ACP to use agent-shell
 (require 'acp)
 (require 'agent-shell)
 
@@ -33,17 +34,24 @@ Some of these must be set before packages load.
 
 ;; Theme Configuration
 ;; Load one of Doom's gorgeous themes
+(setq doom-theme 'doom-outrun-electric)
 ;; (setq doom-theme 'doom-acario-dark)
+;; (setq doom-theme 'doom-challanger-deep)
+;; (setq doom-theme 'doom-dark+)
+;; (setq doom-theme 'doom-horizon)
+;; (setq doom-theme 'doom-laserwave)
+;; (setq doom-theme 'doom-moonlight)
+;; (setq doom-theme 'doom-snazzy)
 ;; I use solaire-mode to make the active buffer stand out
 ;; Awesome tool tbh, didn't knew that it would be THAT useful.
 (solaire-global-mode +1)
 
 ;; Line Numbers
 ;; Options: t (absolute), 'relative, or nil (disabled)
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 'absolute)
 
 ;; Org Directory
-;; Must be sEt before org loads!
+;; Must be set before org loads!
 (setq org-directory "~/orgfiles/")
 
 ;; Enable `variable-pitch-mode` in all buffers
@@ -150,6 +158,7 @@ These are the basic configurations that control how org-mode behaves, including 
   (setq org-download-image-org-width 600)
   (setq-default org-download-heading-lvl nil))
 #+end_src
+
 * Agenda
 ** Look all ORG_DIR for TODOs
 I know that i'm messy, so search everywhere to prevent forgetting.
@@ -237,7 +246,7 @@ I'm experimenting with Copilot. Not so good yet but i will keep trying:
   (add-hook 'elixir-mode-hook 'eglot-ensure)
 
   ;; Avoid symlinks crash
-  ;; (setq find-file-visit-truename t)
+  (setq find-file-visit-truename t)
 
   ;; Ruby LSP
   (add-to-list 'eglot-server-programs '((ruby-mode ruby-ts-mode) "ruby-lsp"))
@@ -423,7 +432,7 @@ I discovered this and love it!
  :config
  (setq! gptel-api-key (getenv "OPENAI_API_KEY"))
  (gptel-make-ollama "Ollama"
-             :host "localhost:11434"
+             :host "mac-mini-de-jorge.dala-altered.ts.net:11434"
              :stream t
              :models '(DeepSeek-R1:latest))
  (gptel-make-gemini "Gemini" :key (getenv "GEMINI_API_KEY") :stream t)
@@ -455,3 +464,11 @@ I discovered this and love it!
 
 #+RESULTS:
 | doom-init-fonts-h | doom-init-theme-h | envrc-global-mode | org-persist-load-all | ns-auto-titlebar-set-all-frames | tramp-register-archive-autoload-file-name-handler | magit-maybe-define-global-key-bindings | table--make-cell-map |
+
+* Tetris mode (and games in general?)
+
+ #+begin_src emacs-lisp
+(evil-set-initial-state 'tetris-mode 'emacs)
+(evil-set-initial-state 'bubbles-mode 'emacs)
+ #+end_src
+ 
